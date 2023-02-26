@@ -5,7 +5,7 @@ from pytube import YouTube
 
 app = Flask(__name__)
 
-LOCATION = "/Users/mvk/PycharmProjects/yt_downloader"
+LOCATION = "/static"
 
 
 @app.route('/')
