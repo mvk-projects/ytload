@@ -1,11 +1,9 @@
-import os
+from io import BytesIO
 
 from flask import Flask, request, render_template, send_file
 from pytube import YouTube
 
 app = Flask(__name__)
-
-LOCATION = "/static"
 
 
 @app.route('/')
@@ -16,32 +14,31 @@ def index():
 @app.route('/output', methods=['POST'])
 def output():
     if request.method == 'POST':
-        urlvalue = request.form.get("search-bar", None)
+        buffer = BytesIO()
+        url_value = request.form.get("search-bar", None)
         resolution = request.form.get("switch-two", None)
-        yt = YouTube(urlvalue)
-        if resolution == "1080p" or resolution == "720p":
-            extension = "mp4"
-            video = yt.streams.filter(res=resolution).first()
-            out_file = video.download(LOCATION)
+        yt = YouTube(url_value)
+        file_name = yt.streams.filter().get_audio_only().default_filename
+        if resolution == "1080p":
+            video = yt.streams.get_by_itag(137)
+            video.stream_to_buffer(buffer)
+            buffer.seek(0)
+            extension = ".mp4"
+            mime_type = "video/mp4"
+        elif resolution == "720p":
+            video = yt.streams.get_by_itag(22)
+            video.stream_to_buffer(buffer)
+            buffer.seek(0)
+            extension = ".mp4"
+            mime_type = "video/mp4"
         else:
-            extension = "mp3"
             audio = yt.streams.filter(only_audio=True).first()
-            out_file = audio.download(LOCATION)
-            base, ext = os.path.splitext(out_file)
-            new_file = base + '.mp3'
-            os.rename(out_file, new_file)
-        out_file = out_file[:-3]
-        out_file = out_file[20:]
-        out_file = out_file[out_file.rindex("/") + 1:]
-        print(out_file)
-        print(LOCATION)
-        print(extension)
-        OUTPUT_LOCATION = LOCATION + "/" + out_file + extension
-        print(OUTPUT_LOCATION)
-        redirect = send_file(OUTPUT_LOCATION, as_attachment=True)
-        if os.path.exists(OUTPUT_LOCATION):
-            os.remove(OUTPUT_LOCATION)
-        return redirect
+            audio.stream_to_buffer(buffer)
+            buffer.seek(0)
+            extension = ".mp3"
+            mime_type = "audio/mp3"
+        file_name = file_name[0:file_name.rindex(".")] + extension
+        return send_file(buffer, download_name=file_name, as_attachment=True, mimetype=mime_type)
 
 
 if __name__ == '__main__':
