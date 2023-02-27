@@ -18,26 +18,20 @@ def output():
         url_value = request.form.get("search-bar", None)
         resolution = request.form.get("switch-two", None)
         yt = YouTube(url_value)
+        extension = ".mp3" if resolution == "haq" else ".mp4"
         file_name = yt.streams.filter().get_audio_only().default_filename
-        if resolution == "1080p":
-            video = yt.streams.get_by_itag(137)
-            video.stream_to_buffer(buffer)
-            buffer.seek(0)
-            extension = ".mp4"
-            mime_type = "video/mp4"
-        elif resolution == "720p":
-            video = yt.streams.get_by_itag(22)
-            video.stream_to_buffer(buffer)
-            buffer.seek(0)
-            extension = ".mp4"
-            mime_type = "video/mp4"
-        else:
+        file_name = file_name[0:file_name.rindex(".")] + extension
+
+        mime_type = "audio/mp3" if resolution == "haq" else "video/mp4"
+        if resolution == "haq":
             audio = yt.streams.filter(only_audio=True).first()
             audio.stream_to_buffer(buffer)
             buffer.seek(0)
-            extension = ".mp3"
-            mime_type = "audio/mp3"
-        file_name = file_name[0:file_name.rindex(".")] + extension
+        else:
+            i_tag = 137 if resolution == "1080p" else 22 if resolution == "720p" else 18
+            video = yt.streams.get_by_itag(i_tag)
+            video.stream_to_buffer(buffer)
+            buffer.seek(0)
         return send_file(buffer, download_name=file_name, as_attachment=True, mimetype=mime_type)
 
 
