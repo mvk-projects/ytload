@@ -18,17 +18,17 @@ def output():
         url_value = request.form.get("search-bar", None)
         resolution = request.form.get("switch-two", None)
         yt = YouTube(url_value)
-        extension = ".mp3" if resolution == "haq" else ".mp4"
+        extension = ".webm" if resolution == "saq" or resolution == "caq" else ".mp4"
         file_name = yt.streams.filter().get_audio_only().default_filename
         file_name = file_name[0:file_name.rindex(".")] + extension
-
-        mime_type = "audio/mp3" if resolution == "haq" else "video/mp4"
-        if resolution == "haq":
-            audio = yt.streams.filter(only_audio=True).first()
+        mime_type = "audio/webm" if resolution == "saq" else "audio/webm" if resolution == "caq" else "video/mp4"
+        audio_bitrate = "160kbps" if resolution == "saq" else "50kbps"
+        if resolution == "saq" or resolution == "caq":
+            audio = yt.streams.filter(abr=audio_bitrate).last()
             audio.stream_to_buffer(buffer)
             buffer.seek(0)
         else:
-            i_tag = 137 if resolution == "1080p" else 22 if resolution == "720p" else 18
+            i_tag = 137 if resolution == "1080p" else 22 if resolution == "720p" else 135 if resolution == "480p" else 18
             video = yt.streams.get_by_itag(i_tag)
             video.stream_to_buffer(buffer)
             buffer.seek(0)
