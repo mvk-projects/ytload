@@ -1,5 +1,5 @@
 <html>
-<meta name="viewport" content="width=device-width, initial-scale=0.9">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <head>
     <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
@@ -160,34 +160,44 @@
         border-radius: 0 4px 4px 0;
         color: white;
     }
+
+
 </style>
 
 <body>
-    <br>
-    <form action="/output" id="formclass" method="post">
-        <h1 align="center">YouTube Media Downloader</h1><br><br><br>
-        <h3>Youtube URL</h3>
-        <input onclick="paste(this)" type="url" name="search-bar" id="search-bar" onfocus="this.placeholder=''"
-            onblur="this.placeholder='Type URL like  https://www.youtube.com'" spellcheck="value" autofocus="autofocus"
-            required><br><br><br>
-        <h3>Output Format</h3>
-        <div class="switch-field">
-            <input type="radio" id="radio-three" name="switch-two" value="1080p" />
-            <label for="radio-three">1080p</label>
-            <input type="radio" id="radio-four" name="switch-two" value="720p" />
-            <label for="radio-four">720p</label>
-            <input type="radio" id="radio-five" name="switch-two" value="720p" />
-            <label for="radio-five">360p</label>
-            <input type="radio" id="radio-six" name="switch-two" value="haq" />
-            <label for="radio-six">Highest Audio Quality</label>
-        </div>
-        <br><br>
-        <input type="button" id="bye" onclick="submitForm(event)" value="DOWNLOAD">
-    </form>
-    <div class="footer">
-        <footer style="color:black;font-weight:600;">&copy; Copyright 2023 Vamshi Krishna Madhavan</footer>
+<br>
+<form action="/output" id="formclass" method="post">
+    <h1 align="center">YouTube Media Downloader</h1><br/><br/><br/>
+    <h3>Youtube URL</h3>
+    <input onclick="paste(this)" type="url" name="search-bar" id="search-bar" onfocus="this.placeholder=''"
+           onblur="this.placeholder='Type URL like  https://www.youtube.com'" spellcheck="value" autofocus="autofocus"
+           required><br/><br/>
+    <h4>VIDEO</h4>
+    <div class="switch-field">
+        <input type="radio" id="radio-three" name="switch-two" value="1080p"/>
+        <label for="radio-three">1080p</label>
+        <input type="radio" id="radio-four" name="switch-two" value="720p"/>
+        <label for="radio-four">720p</label>
+        <input type="radio" id="radio-five" name="switch-two" value="480p"/>
+        <label for="radio-five">480p</label>
+        <input type="radio" id="radio-six" name="switch-two" value="360p"/>
+        <label for="radio-six">360p</label>
     </div>
-    <script>
+    <br/>
+    <h4>AUDIO</h4>
+    <div class="switch-field">
+        <input type="radio" id="radio-seven" name="switch-two" value="caq"/>
+        <label for="radio-seven">Compressed Audio</label>
+        <input type="radio" id="radio-eight" name="switch-two" value="saq"/>
+        <label for="radio-eight">Standard Audio</label>
+    </div>
+    <br/><br/>
+    <input type="button" id="bye" onclick="submitForm(event)" value="DOWNLOAD">
+</form>
+<div class="footer">
+    <footer style="color:black;font-weight:600;">&copy; Copyright 2023 Vamshi Krishna Madhavan</footer>
+</div>
+<script>
 
         function submitForm(e) {
             var text = document.getElementById("search-bar").value;
@@ -195,7 +205,7 @@
             var selectedFormat = ""
             for (i = 0; i < formats.length; i++) {
                 if (formats[i].checked)
-                    selectedFormat = (formats[i].value == "haq") ? "Audio Only" : "Video + Audio";
+                    selectedFormat = (formats[i].value == "saq" || formats[i].value == "caq") ? "Audio Only" : "Video + Audio";
             }
             $.getJSON('https://noembed.com/embed',
                 { format: 'json', url: text }, function (data) {
@@ -228,7 +238,9 @@
 
 
 
-    </script>
+
+
+</script>
 </body>
 
 </html>
