@@ -1,9 +1,11 @@
 from io import BytesIO
+import logging
 
 from flask import Flask, request, render_template, send_file
 from pytube import YouTube
 
 app = Flask(__name__)
+logger = logging.getLogger(__name__)
 
 
 @app.route('/')
@@ -18,13 +20,12 @@ def output():
         url_value = request.form.get("search-bar", None)
         resolution = request.form.get("switch-two", None)
         yt = YouTube(url_value)
-        extension = ".webm" if resolution == "saq" or resolution == "caq" else ".mp4"
+        extension = ".mp3" if resolution == "saq" else ".mp4"
         file_name = yt.streams.filter().get_audio_only().default_filename
         file_name = file_name[0:file_name.rindex(".")] + extension
-        mime_type = "audio/webm" if resolution == "saq" else "audio/webm" if resolution == "caq" else "video/mp4"
-        audio_bitrate = "160kbps" if resolution == "saq" else "50kbps"
-        if resolution == "saq" or resolution == "caq":
-            audio = yt.streams.filter(abr=audio_bitrate).last()
+        mime_type = "audio/mpeg" if resolution == "saq" else "video/mp4"
+        if resolution == "saq":
+            audio = yt.streams.get_lowest_resolution()
             audio.stream_to_buffer(buffer)
             buffer.seek(0)
         else:
