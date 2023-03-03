@@ -32,12 +32,12 @@ def output():
         else:
             if resolution == "1080p":
                 try:
-                    buffer = BytesIO
+                    buffer = BytesIO()
                     video = yt.streams.get_by_itag(137)
                     video.stream_to_buffer(buffer)
                     buffer.seek(0)
                 except:
-                    buffer = BytesIO
+                    buffer = BytesIO()
                     video = yt.streams.get_by_itag(22)
                     video.stream_to_buffer(buffer)
                     buffer.seek(0)
